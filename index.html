@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Élection - Vote</title>
+
+  <!-- Icônes et police Google -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Material+Symbols+Outlined" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(120deg, #a1c4fd, #c2e9fb);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    form {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-weight: 500;
+      color: #555;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    input[type="radio"] {
+      margin-right: 10px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #007bff;
+      border: none;
+      color: white;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+
+  <script>
+    function envoyerVote(event) {
+      event.preventDefault();
+
+      const nom = document.getElementById("nom").value;
+      const candidat = document.querySelector('input[name="candidat"]:checked').value;
+
+      const formData = new FormData();
+      formData.append("access_key", "27c0f2dc-3626-400e-ad56-1c8948ed40f7"); // ✅ Clé insérée
+      formData.append("nom", nom);
+      formData.append("candidat", candidat);
+      formData.append("subject", "Nouveau vote reçu via le formulaire");
+
+      fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => response.json())
+      .then(result => {
+        if (result.success) {
+          alert("✅ Vote envoyé avec succès !");
+          document.getElementById("form-vote").reset();
+        } else {
+          alert("❌ Échec de l'envoi du vote.");
+          console.error(result);
+        }
+      })
+      .catch(error => {
+        alert("❌ Une erreur est survenue.");
+        console.error(error);
+      });
+    }
+  </script>
+</head>
+<body>
+  <form id="form-vote" onsubmit="envoyerVote(event)">
+    <h1>🗳 Vote pour l'élection</h1>
+
+    <label for="nom">Ton nom :</label>
+    <input type="text" id="nom" name="nom" required minlength="2">
+
+    <p><strong>Choisis ton candidat :</strong></p>
+    <input type="radio" id="cand1" name="candidat" value="Candidat 1" required>
+    <label for="cand1">Candidat 1</label><br>
+    <input type="radio" id="cand2" name="candidat" value="Candidat 2">
+    <label for="cand2">Candidat 2</label><br><br>
+
+    <button type="submit">Envoyer mon vote</button>
+  </form>
+</body>
+</html>
